@@ -54,9 +54,9 @@
   when: "item != '1-prometheus.yml'"
 
 - name: copy another config parts
-  copy:
+  template:
     src: "{{ item }}"
-    dest: "{{ prometheus_config_dir }}/conf.d/"
+    dest: "{{ prometheus_config_dir }}/conf.d/{{ item | basename | regex_replace('\\.j2','') }}"
     owner: "{{ prometheus_user }}"
     group: "{{ prometheus_group }}"
     mode: 0644
@@ -87,7 +87,7 @@
   changed_when: False
   become: False
   delegate_to: localhost
-  
+
 - name: delete unmanaged tgroups files
   file:
     path: "{{ prometheus_file_sd_config_dir }}/{{ item }}"
