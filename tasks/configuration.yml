@@ -10,6 +10,7 @@
     path: "{{ prometheus_rules_dir }}/{{ item }}"
     state: absent
   with_items: "{{ rules_content.stdout_lines | difference(prometheus_rules_files) }}"
+  when: "rules_content.stdout_lines is defined"
   notify:
     - reload prometheus
 
@@ -35,6 +36,7 @@
     mode: 0755
   notify:
     - reload prometheus
+  when: "prometheus_non_ansible_managed is defined"
 
 - name: copy prometheus 1st part config
   template:
@@ -61,7 +63,7 @@
     path: "{{ prometheus_config_dir }}/conf.d/{{ item }}"
     state: absent
   with_items: "{{ config_parts_content.stdout_lines | difference(config_parts_local_content.stdout_lines) }}"
-  when: "item != '1-prometheus.yml'"
+  when: "config_parts_content.stdout_lines is defined and item != '1-prometheus.yml'"
 
 - name: copy another config parts
   template:
@@ -103,6 +105,7 @@
     path: "{{ prometheus_file_sd_config_dir }}/{{ item }}"
     state: absent
   with_items: "{{ tgroups_content.stdout_lines | difference(tgroups_local_content.stdout_lines) }}"
+  when: "tgroups_content.stdout_lines is defined"
 
 - name: copy target group files from playbook directory
   copy:
