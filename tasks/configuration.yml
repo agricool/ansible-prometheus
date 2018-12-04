@@ -26,6 +26,16 @@
   notify:
     - reload prometheus
 
+- name: create directory for non-ansible managed rules
+  file:
+    path: "{{ prometheus_non_ansible_managed }}/rules"
+    state: directory
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: 0755
+  notify:
+    - reload prometheus
+
 - name: copy prometheus 1st part config
   template:
     src: "etc/prometheus/prometheus.yml.j2"
