@@ -10,7 +10,9 @@ rule_files:
   - {{ prometheus_rules_dir }}/{{ dest }}
   {% endfor %}
 {% endif %}
-  - /etc/prometheus/non-ansible-managed/rules/*.rules
+{% if prometheus_non_ansible_managed is defined %}
+  - {{ prometheus_non_ansible_managed }}/rules/*.rules
+{% endif %}
 
 # A list of scrape configurations.
 scrape_configs:
